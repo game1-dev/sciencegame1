@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مغامرة العلوم - النسخة النهائية المطورة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        :root {
+            --blue: #4facfe;
+            --green: #20bf55;
+            --yellow: #FFD700;
+            --orange: #f57b51;
+            --purple: #764ba2;
+            --pink: #f093fb;
+            --red: #f5576c;
+            --dark: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+            padding: 35px;
+            text-align: center;
+            animation: fadeIn 0.7s ease-out;
+            border: 5px solid white;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .screen-flash.correct { animation: flash-correct 0.5s ease-out; }
+        .screen-flash.wrong { animation: flash-wrong 0.5s ease-out; }
+
+        @keyframes flash-correct {
+            0% { opacity: 0.6; background: rgba(32, 191, 85, 0.5); }
+            100% { opacity: 0; background: rgba(32, 191, 85, 0); }
+        }
+        @keyframes flash-wrong {
+            0% { opacity: 0.6; background: rgba(245, 87, 108, 0.5); }
+            100% { opacity: 0; background: rgba(245, 87, 108, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        #start-screen {
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(240,245,255,1) 100%);
+            border: 8px solid var(--purple);
+            padding-top: 50px;
+            padding-bottom: 50px;
+        }
+        .start-screen-icon {
+            position: absolute;
+            color: rgba(118, 75, 162, 0.1);
+            font-size: 50px;
+            animation: floatAnimation 6s ease-in-out infinite alternate;
+            z-index: 0;
+        }
+        .start-screen-icon:nth-child(1) { top: 10%; left: 15%; font-size: 60px; animation-duration: 7s; }
+        .start-screen-icon:nth-child(2) { top: 20%; right: 10%; font-size: 40px; animation-duration: 5s; animation-delay: 1s; }
+        .start-screen-icon:nth-child(3) { bottom: 15%; left: 20%; font-size: 70px; animation-duration: 8s; }
+        .start-screen-icon:nth-child(4) { bottom: 25%; right: 25%; font-size: 55px; animation-duration: 6s; animation-delay: 2s; }
+        .start-screen-icon:nth-child(5) { top: 50%; left: 5%; font-size: 45px; animation-duration: 9s; }
+        .start-screen-icon:nth-child(6) { top: 60%; right: 15%; font-size: 65px; animation-duration: 7s; animation-delay: 0.5s; }
+        .start-content { position: relative; z-index: 1; }
+
+        @keyframes floatAnimation {
+            from { transform: translateY(-15px) rotate(-5deg) scale(1); }
+            to { transform: translateY(15px) rotate(5deg) scale(1.1); }
+        }
+        
+        #start-screen .game-title {
+            font-size: 3.8rem;
+            font-weight: 900;
+            animation: rainbow 4s ease infinite, title-pop 1s ease-out;
+            background-size: 300% 300%;
+        }
+
+        @keyframes title-pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        #start-screen .game-subtitle {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 35px;
+            font-weight: 700;
+        }
+
+        .game-title {
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--pink), var(--orange), var(--yellow), var(--green), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        @keyframes rainbow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .btn {
+            background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 51%, #6a11cb 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.5s;
+            box-shadow: 0 10px 30px rgba(0,0,0, 0.2);
+            margin: 15px;
+            font-weight: 700;
+            background-size: 200% auto;
+        }
+        #start-btn { animation: pulse 2s infinite; }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            margin: 5px;
+            border-radius: 10px;
+        }
+
+        .btn:hover {
+            background-position: right center;
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(48, 55, 120, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .btn .fas { margin-left: 10px; }
+        
+        .continue-btn {
+            background-image: linear-gradient(to right, #1D976C 0%, #93F9B9 51%, #1D976C 100%);
+        }
+
+        #game-screen, #end-screen { display: none; }
+        
+        #end-screen {
+            position: relative;
+        }
+        .win-title {
+            animation: rainbow 4s infinite, win-pop 1s forwards;
+            font-size: 4rem;
+            text-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px var(--yellow);
+        }
+
+        @keyframes win-pop {
+            0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+            70% { transform: scale(1.1) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .game-info { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 15px; margin: 25px 0; align-items: center; }
+        .info-badge { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px; padding: 15px 20px; font-size: 1.1rem; font-weight: 700; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .progress-container { width: 100%; height: 25px; background: rgba(255,255,255,0.3); border: 4px solid var(--purple); border-radius: 15px; overflow: hidden; box-shadow: inset 0 3px 8px rgba(0,0,0,0.2); }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%); transition: width 0.6s ease; animation: shimmer 2s linear infinite; background-size: 200% 100%; }
+        @keyframes shimmer { 0% { background-position: -200% 0%; } 100% { background-position: 200% 0%; } }
+
+        .question-header { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; padding: 12px 25px; border-radius: 15px; margin-bottom: 20px; font-size: 1.2rem; font-weight: 700; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .question-container { background: linear-gradient(135deg, #fff5f7 0%, #fff9e5 50%, #f0f9ff 100%); border: 5px solid var(--purple); border-radius: 25px; padding: 30px; margin: 20px 0; box-shadow: 0 15px 40px rgba(0,0,0,0.15); animation: slideIn 0.5s ease-out; min-height: 300px; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        .question-image { max-width: 100%; height: auto; max-height: 200px; border-radius: 15px; margin-bottom: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); border: 4px solid white; }
+        .question-text { font-size: 1.4rem; color: var(--dark); font-weight: 700; margin-bottom: 25px; line-height: 1.7; padding: 18px; background: white; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 25px 0; }
+        
+        .option { 
+            background: linear-gradient(135deg, #ffffff, #f8f9fa); 
+            border: 4px solid var(--purple); 
+            border-radius: 18px; 
+            padding: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            min-height: 70px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
+        }
+
+        .option-image-container {
+            width: 100%;
+            height: 120px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .option-text {
+            font-weight: 700;
+        }
+
+        .option:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 10px 25px rgba(118, 75, 162, 0.3); border-color: var(--pink); }
+        .option.correct { background: linear-gradient(135deg, #00FF88, #00d4aa); color: white; border-color: var(--green); animation: bounceCorrect 0.6s; }
+        .option.wrong { background: linear-gradient(135deg, #FF4757, #ff6b81); color: white; border-color: var(--red); animation: shakeWrong 0.5s; }
+        @keyframes bounceCorrect { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) rotate(2deg); } }
+        @keyframes shakeWrong { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-8px); } 50% { transform: translateX(8px); } }
+
+        .true-false-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 25px 0; }
+        .tf-option { padding: 25px; font-size: 1.6rem; border-radius: 20px; cursor: pointer; transition: all 0.3s; font-weight: 900; border: 5px solid var(--dark); display: flex; flex-direction: column; align-items: center; gap: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .tf-option i { font-size: 2.2rem; }
+        .tf-true { background: linear-gradient(135deg, #00FF88, #00d4aa); color: white; }
+        .tf-false { background: linear-gradient(135deg, #FF4757, #ff6b81); color: white; }
+        .tf-option:hover { transform: scale(1.08) rotate(2deg); box-shadow: 0 12px 35px rgba(0,0,0,0.3); }
+        
+        .matching-game-container { display: flex; flex-direction: column; gap: 15px; }
+        .matching-instruction { background: linear-gradient(135deg, #fff9c4, #ffecb3); border: 3px solid var(--orange); border-radius: 12px; padding: 15px; font-weight: 700; font-size: 1.1rem; color: var(--dark); }
+        .matching-board { background: linear-gradient(135deg, #FFFACD, #FFF8DC); border: 6px solid #8B4513; border-radius: 20px; padding: 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .matching-columns { display: flex; justify-content: space-between; gap: 10%; position: relative; }
+        .matching-column { display: flex; flex-direction: column; gap: 15px; width: 45%; }
+        .matching-item { background: white; border: 3px solid #333; border-radius: 15px; padding: 10px; font-size: 1rem; font-weight: 700; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; min-height: 60px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .matching-item.left-item { background: linear-gradient(135deg, #FF69B4, #f5576c); color: white; }
+        .matching-item:hover { transform: scale(1.05); }
+        .matching-item.selected { border: 4px solid var(--yellow); box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); transform: scale(1.08); }
+        .matching-item.matched { opacity: 0.7; pointer-events: none; }
+        .matching-item.matched.left-item, .matching-item.matched.right-item { background: linear-gradient(135deg, #90EE90, #32CD32); border-color: #32CD32; }
+        .matching-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .matching-columns > div { position: relative; z-index: 2; }
+
+        .compare-container { background: white; border-radius: 15px; padding: 20px; margin: 25px 0; }
+        .compare-table { width: 100%; border-collapse: collapse; }
+        .compare-table th { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; padding: 15px; font-size: 1.2rem; border: 2px solid #ddd; }
+        .compare-table td { padding: 15px; border: 2px solid #ddd; text-align: center; }
+        .compare-table td:first-child { background: #f8f9fa; font-weight: 700; font-size: 1.1rem; }
+        .compare-input { width: 90%; padding: 12px; border: 3px solid var(--purple); border-radius: 10px; font-size: 1.1rem; font-weight: 700; text-align: center; transition: all 0.3s; background: white; }
+        .compare-input:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 15px rgba(255, 20, 147, 0.3); }
+        .compare-input.correct-answer { border-color: var(--green); background: linear-gradient(135deg, #d5f4e6, #b2f5ea); }
+        .compare-input.wrong-answer { border-color: var(--red); background: linear-gradient(135deg, #fadbd8, #fed7d7); }
+        .fill-blank-input { width: 100%; padding: 15px; font-size: 1.2rem; border: 5px solid var(--purple); border-radius: 15px; margin: 20px 0; text-align: center; font-weight: 700; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: all 0.3s; }
+        .fill-blank-input:focus { outline: none; border-color: var(--pink); box-shadow: 0 8px 25px rgba(255, 20, 147, 0.3); }
+        .ordering-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .ordering-item { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 450px; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .ordering-input { width: 60px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border: 3px solid var(--purple); border-radius: 10px; }
+        .ordering-text { font-size: 1.2rem; font-weight: 700; color: var(--dark); display: flex; align-items: center; gap: 10px; flex-grow: 1; justify-content: flex-end; }
+        .ordering-text img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+        .ordering-input.correct-answer { border-color: var(--green); }
+        .ordering-input.wrong-answer { border-color: var(--red); }
+        .retry-message { background: linear-gradient(135deg, #fff3cd, #ffe5a1); border: 4px solid var(--orange); border-radius: 15px; padding: 18px; margin-top: 15px; font-weight: 700; font-size: 1.2rem; color: var(--dark); animation: pulse 1.2s infinite; box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3); }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+
+        .notification { position: fixed; top: 25px; right: 25px; padding: 20px 30px; background: white; border: 4px solid var(--dark); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 10000; animation: slideInRight 0.4s; font-weight: 700; max-width: 400px; font-size: 1.1rem; }
+        .notification.success { border-color: var(--green); background: linear-gradient(135deg, #d5f4e6, #b2f5ea); }
+        .notification.error { border-color: var(--red); background: linear-gradient(135deg, #fadbd8, #fed7d7); }
+        .notification.info { border-color: var(--blue); background: linear-gradient(135deg, #e1f5fe, #b3e5fc); }
+        @keyframes slideInRight { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        .floating-btn { position: fixed; width: 65px; height: 65px; border-radius: 50%; color: white; border: 4px solid white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: all 0.3s; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0, 0.3); }
+        .floating-btn:hover { transform: scale(1.15) rotate(10deg); }
+        .sound-toggle { bottom: 25px; left: 25px; background: linear-gradient(135deg, var(--pink), var(--purple)); }
+        .admin-skip-btn { bottom: 100px; left: 25px; background: linear-gradient(135deg, #FFD700, #FFA500); display: none; }
+        .admin-back-btn { bottom: 175px; left: 25px; background: linear-gradient(135deg, #787878, #484848); display: none; }
+        .admin-settings-btn { bottom: 250px; left: 25px; background: linear-gradient(135deg, #4b6cb7, #182848); display: none; }
+        .admin-audio-btn { bottom: 325px; left: 25px; background: linear-gradient(135deg, #00c6ff, #0072ff); display: none; }
+        .admin-skip-btn.active, .admin-back-btn.active, .admin-settings-btn.active, .admin-audio-btn.active { display: flex; }
+        .pause-btn { bottom: 25px; right: 25px; background: linear-gradient(135deg, var(--orange), var(--yellow)); display: none; }
+        .pause-btn.active { display: flex; }
+        .admin-indicator { position: fixed; top: 15px; left: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: white; padding: 10px 20px; border-radius: 10px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(255, 165, 0, 0.5); display: none; z-index: 10000; }
+        .admin-indicator.active { display: block; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.8); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-overlay.active { display: flex; }
+        .modal-menu { background: white; border-radius: 20px; padding: 30px 40px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 5px solid var(--purple); width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal-menu h2 { font-size: 1.8rem; color: var(--purple); margin-bottom: 20px; }
+        .modal-menu .btn { margin: 10px; }
+        .modal-input { width: 100%; padding: 12px; border: 3px solid var(--purple); border-radius: 10px; font-size: 1rem; margin-bottom: 15px; text-align: right; }
+        .modal-label { font-weight: 700; display: block; margin-bottom: 5px; text-align: right; }
+        .modal-info { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+        #audio-upload-form hr {
+            margin: 25px 0;
+            border: none;
+            border-top: 2px dashed #ddd;
+        }
+
+        /* تعديلات جذرية للاستجابة */
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            #start-screen .game-title { font-size: 2.5rem; }
+            #start-screen .game-subtitle { font-size: 1.1rem; }
+            .win-title { font-size: 2.8rem; }
+            
+            .btn { padding: 12px 25px; font-size: 1rem; }
+            .options-container, .true-false-container { grid-template-columns: 1fr; gap: 10px; }
+            .game-info { grid-template-columns: 1fr; gap: 10px; }
+            .info-badge, .option, .compare-table th, .compare-table td { font-size: 0.95rem; }
+            .option { min-height: 60px; font-size: 0.9rem; padding: 10px; }
+            .question-text { font-size: 1.1rem; }
+            .fill-blank-input { font-size: 1.1rem; }
+            .tf-option { font-size: 1.3rem; padding: 15px; }
+            .floating-btn { width: 55px; height: 55px; font-size: 1.5rem; }
+            .sound-toggle { bottom: 15px; left: 15px; }
+            .admin-skip-btn { bottom: 80px; left: 15px; }
+            .admin-back-btn { bottom: 145px; left: 15px; }
+            .admin-settings-btn { bottom: 210px; left: 15px; }
+            .admin-audio-btn { bottom: 275px; left: 15px; }
+            .pause-btn { bottom: 15px; right: 15px; }
+            .start-screen-icon { display: none; }
+            .matching-item { font-size: 0.9rem; padding: 10px 8px; min-height: 50px; }
+            .matching-columns { gap: 5%; }
+
+            /* Responsive Table Styles */
+            .compare-table thead { display: none; }
+            .compare-table tr {
+                display: block;
+                margin-bottom: 15px;
+                border: 2px solid var(--purple);
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            .compare-table td {
+                display: block;
+                text-align: right;
+                padding: 12px;
+                padding-right: 15px;
+                position: relative;
+                border: none;
+                border-bottom: 1px solid #eee;
+            }
+            .compare-table tr td:last-child { border-bottom: none; }
+            .compare-table td:not(:first-child)::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+                color: var(--dark);
+                font-size: 0.9rem;
+            }
+            .compare-table td:first-child {
+                text-align: center;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                font-weight: 700;
+                font-size: 1.1rem;
+            }
+            .compare-input { width: 100%; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="screen-flash" class="screen-flash"></div>
+    <div id="notification-container"></div>
+    <div class="admin-indicator" id="admin-indicator">وضع المشرف</div>
+    <button class="floating-btn sound-toggle" id="sound-toggle"><i class="fas fa-volume-up"></i></button>
+    <button class="floating-btn admin-back-btn" id="admin-back-btn"><i class="fas fa-backward"></i></button>
+    <button class="floating-btn admin-skip-btn" id="admin-skip-btn"><i class="fas fa-forward"></i></button>
+    <button class="floating-btn admin-settings-btn" id="admin-settings-btn"><i class="fas fa-cog"></i></button>
+    <button class="floating-btn admin-audio-btn" id="admin-audio-btn"><i class="fas fa-music"></i></button>
+    <button class="floating-btn pause-btn" id="pause-btn"><i class="fas fa-pause"></i></button>
+    
+    <div class="modal-overlay" id="pause-overlay">
+        <div class="modal-menu">
+            <h2>اللعبة متوقفة</h2>
+            <button class="btn" id="resume-btn"><i class="fas fa-play"></i> استئناف</button>
+            <button class="btn" id="restart-game-btn"><i class="fas fa-redo"></i> إعادة البدء</button>
+            <button class="btn" id="exit-btn"><i class="fas fa-times"></i> خروج</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="admin-settings-modal">
+        <div class="modal-menu">
+            <h2>إعدادات GitHub</h2>
+            <p class="modal-info">أدخل معلومات مستودع GitHub لرفع الصور.</p>
+            <label for="github-user" class="modal-label">اسم المستخدم في GitHub:</label>
+            <input type="text" id="github-user" class="modal-input" placeholder="e.g., myusername">
+            <label for="github-repo" class="modal-label">اسم المستودع (Repository):</label>
+            <input type="text" id="github-repo" class="modal-input" placeholder="e.g., science-game-images">
+            <label for="github-token-setup" class="modal-label">مفتاح الوصول الشخصي (PAT):</label>
+            <input type="password" id="github-token-setup" class="modal-input" placeholder="ghp_...">
+            <p class="modal-info" style="color: var(--orange); font-weight: bold;">سيتم حفظ المفتاح لهذه الجلسة فقط. أغلق النافذة وسيتم حذفه.</p>
+            <button class="btn" id="save-admin-settings-btn">حفظ الإعدادات</button>
+            <button class="btn" id="close-admin-settings-btn" style="background-image: linear-gradient(to right, #787878 0%, #484848 100%);">إغلاق</button>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="image-upload-modal">
+        <div class="modal-menu">
+            <h2>اختر صورة لرفعها</h2>
+            <p class="modal-info">سيتم عرض الصورة فورًا ورفعها في الخلفية.</p>
+            <input type="file" id="image-file-input" class="modal-input" accept="image/*" style="display: none;">
+            <label for="image-file-input" class="btn">
+                <i class="fas fa-folder-open"></i> اختر ملف...
+            </label>
+            <p class="modal-info">اسم الملف المطلوب: <strong id="required-filename"></strong></p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="admin-audio-modal">
+        <div class="modal-menu">
+            <h2>إعدادات المسؤول (الأصوات)</h2>
+            <p class="modal-info">ارفع ملفات صوتية مخصصة (MP3, WAV) لتغيير أصوات اللعبة. سيتم حفظها في متصفحك.</p>
+            <div id="audio-upload-form"></div>
+            <button class="btn" id="save-custom-sounds-btn">حفظ وتطبيق الأصوات</button>
+            <button class="btn" id="reset-custom-sounds-btn" style="background-image: linear-gradient(to right, #f57b51 0%, #e73c7e 100%);">استعادة الأصوات الافتراضية</button>
+            <button class="btn" id="close-audio-modal-btn" style="background-image: linear-gradient(to right, #787878 0%, #484848 100%);">إغلاق</button>
+        </div>
+    </div>
+
+
+    <div class="container" id="start-screen">
+        <div class="start-screen-icon"><i class="fas fa-flask"></i></div>
+        <div class="start-screen-icon"><i class="fas fa-atom"></i></div>
+        <div class="start-screen-icon"><i class="fas fa-dna"></i></div>
+        <div class="start-screen-icon"><i class="fas fa-leaf"></i></div>
+        <div class="start-screen-icon"><i class="fas fa-microscope"></i></div>
+        <div class="start-screen-icon"><i class="fas fa-satellite"></i></div>
+        <div class="start-content">
+            <h1 class="game-title">مغامرة العلوم</h1>
+            <p class="game-subtitle">هل أنت مستعد لتحدي علمي ممتع؟</p>
+            <button class="btn" id="start-btn">ابدأ اللعبة <i class="fas fa-rocket"></i></button>
+        </div>
+    </div>
+
+    <div class="container" id="game-screen">
+        <div class="game-info">
+            <div class="info-badge score"><i class="fas fa-star"></i> <span id="score-value">0</span> نقطة</div>
+            <div class="progress-container"><div class="progress-bar" id="progress-bar" style="width: 0%"></div></div>
+            <div class="info-badge"><i class="fas fa-list-ol"></i> سؤال <span id="question-number">1</span> / <span id="total-questions">0</span></div>
+        </div>
+        <div class="question-header" id="question-header"></div>
+        <div class="question-container">
+            <div id="question-image-container"></div>
+            <h2 class="question-text" id="question-text"></h2>
+            <div id="options-container" class="options-container"></div>
+        </div>
+    </div>
+
+    <div class="container" id="end-screen">
+        <h2 class="game-title win-title">تهانينا!</h2>
+        <p class="game-subtitle" style="font-size: 1.8rem;">لقد أكملت مغامرة العلوم بنجاح</p>
+        <p style="font-size: 3.5rem; font-weight: 900; color: var(--purple); margin: 30px 0;">
+            <i class="fas fa-trophy"></i> <span id="final-score">0</span> نقطة
+        </p>
+        <p style="font-size: 1.3rem; color: var(--dark); margin: 18px 0;">
+            من أصل <span id="max-score" style="font-weight: 700;">0</span> نقطة
+        </p>
+        <button class="btn" id="restart-btn"><i class="fas fa-redo"></i> العب مرة أخرى</button>
+    </div>
+
+    <!-- Audio files -->
+    <audio id="background-music" src="assets/sfx/music.mp3" loop preload="auto"></audio>
+    <audio id="correct-sound" src="assets/sfx/right.mp3" preload="auto"></audio>
+    <audio id="wrong-sound" src="assets/sfx/wrong.mp3" preload="auto"></audio>
+    <audio id="win-sound" src="assets/sfx/vectory.mp3" preload="auto"></audio>
+    <audio id="click-sound" src="assets/sfx/mouse-click.mp3" preload="auto"></audio>
+    <audio id="milestone-sound" src="assets/sfx/points collecting.mp3" preload="auto"></audio>
+    
+    <!-- NOTE: These sounds do not have local files in your 'sfx' folder. Add them if you want the game to be fully offline. -->
+    <audio id="start-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-bonus-reached-2065.mp3" preload="auto"></audio>
+    <audio id="transition-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-fast-woosh-1487.mp3" preload="auto"></audio>
+    <audio id="hover-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-single-key-press-in-a-typing-interface-2384.mp3" preload="auto"></audio>
+    <audio id="select-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-quick-toggle-interface-sound-2568.mp3" preload="auto"></audio>
+    <audio id="match-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-bonus-extra-in-a-video-game-2064.mp3" preload="auto"></audio>
+    <audio id="notification-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3" preload="auto"></audio>
+    <audio id="confetti-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-magic-sweep-game-trophy-257.mp3" preload="auto"></audio>
+
+    <script>
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const endScreen = document.getElementById('end-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const scoreValue = document.getElementById('score-value');
+        const progressBar = document.getElementById('progress-bar');
+        const questionImageContainer = document.getElementById('question-image-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const finalScore = document.getElementById('final-score');
+        const maxScore = document.getElementById('max-score');
+        const soundToggle = document.getElementById('sound-toggle');
+        const questionHeader = document.getElementById('question-header');
+        const questionNumber = document.getElementById('question-number');
+        const totalQuestions = document.getElementById('total-questions');
+        const adminBackBtn = document.getElementById('admin-back-btn');
+        const adminSkipBtn = document.getElementById('admin-skip-btn');
+        const adminSettingsBtn = document.getElementById('admin-settings-btn');
+        const adminAudioBtn = document.getElementById('admin-audio-btn');
+        const screenFlash = document.getElementById('screen-flash');
+        const backgroundMusic = document.getElementById('background-music');
+
+        // Game State
+        let score = 0;
+        let currentQuestionIndex = 0;
+        let isSoundEnabled = true;
+        let wrongAttempts = 0;
+        let adminMode = false;
+        let isPaused = false;
+        let githubConfig = { user: '', repo: '' };
+        let lastQuestionType = null;
+
+        // NEW: Audio Context for robust playback
+        let audioContext;
+        let isAudioInitialized = false;
+
+        // Matching Game State
+        let selectedLeft = null;
+        let matchedPairs = [];
+        let matchingCanvas = null;
+        let matchingCtx = null;
+        
+        // Admin State
+        let adminKeys = '';
+        let adminTimeout = null;
+        let customSounds = {};
+        let uploadTarget = { filename: null, element: null };
+
+        // Constants
+        const STORAGE_KEY = 'scienceGameProgress_vFinal_2';
+        const GITHUB_CONFIG_KEY = 'scienceGameGithubConfig_vFinal_2';
+        const CUSTOM_SOUNDS_KEY = 'scienceGameCustomSounds_vFinal_1';
+        const GITHUB_TOKEN_KEY = 'githubAdminToken_session';
+        
+        let resizeObserver;
+        
+        const soundDefinitions = {
+            'correct': 'صوت الإجابة الصحيحة',
+            'wrong': 'صوت الإجابة الخاطئة',
+            'win': 'صوت الفوز في النهاية',
+            'click': 'صوت النقر على الأزرار',
+            'start': 'صوت بدء اللعبة',
+            'transition': 'صوت الانتقال بين الأسئلة',
+            'hover': 'صوت مرور الماوس',
+            'milestone': 'صوت تحقيق إنجاز (نقاط)',
+            'select': 'صوت اختيار عنصر (لعبة التوصيل)',
+            'match': 'صوت نجاح التوصيل',
+            'notification': 'صوت تنبيه (سؤال جديد)',
+            'confetti': 'صوت ظهور قصاصات الفرح'
+        };
+
+        // =========================================================================
+        // ======================== BANK OF QUESTIONS (EXPANDED) =====================
+        // =========================================================================
+        const questions = [
+            // === True/False Questions (54 Questions) ===
+            { type: "true-false", text: "لكي نرى الخلايا نحتاج إلى المجهر.", answer: true },
+            { type: "true-false", text: "تُصنف دودة الأرض من الديدان الحلقية.", answer: true },
+            { type: "true-false", text: "الحراشف تغطي أجسام الزواحف.", answer: true },
+            { type: "true-false", text: "الجهاز الدوري يساعد الحيوان على الحركة.", answer: false },
+            { type: "true-false", text: "الأسماك من الحيوانات الفقارية.", answer: true },
+            { type: "true-false", text: "الأمطار والتربة من العوامل الحيوية.", answer: false },
+            { type: "true-false", text: "بركة الماء مثال على النظام البيئي.", answer: true },
+            { type: "true-false", text: "تبدأ السلسلة الغذائية بالمنتجات.", answer: true },
+            { type: "true-false", text: "يتكون الجهاز الهيكلي من العظام.", answer: true },
+            { type: "true-false", text: "أكبر مجموعة في اللافقاريات هي المفصليات.", answer: true },
+            { type: "true-false", text: "من الأمثلة على المحللات الفطريات والبكتيريا.", answer: true },
+            { type: "true-false", text: "البرمائيات درجة حرارة أجسامها متغيرة.", answer: true },
+            { type: "true-false", text: "النسيج مجموعة من الخلايا المتماثلة.", answer: true },
+            { type: "true-false", text: "الثدييات درجة حرارة أجسامها ثابتة.", answer: true },
+            { type: "true-false", text: "الحشرات لها هيكل خارجي صلب يحمي أجسامها.", answer: true },
+            { type: "true-false", text: "الفجوات تخزن الماء والغذاء والفضلات في الخلية.", answer: true },
+            { type: "true-false", text: "اللاسعات لها لوامس تشبه الأذرع تنتهي بخلايا لاسعة.", answer: true },
+            { type: "true-false", text: "الجهاز الهضمي يساعد على تفكيك الطعام وتحليله.", answer: true },
+            { type: "true-false", text: "يعمل الجهاز الهيكلي مع الجهاز العضلي لمساعدة الحيوان على الحركة.", answer: true },
+            { type: "true-false", text: "الجهاز العصبي في اللافقاريات بسيط.", answer: true },
+            { type: "true-false", text: "قد يكون النظام البيئي صغيراً جداً كجذع شجرة أو كبيراً جداً كالصحراء.", answer: true },
+            { type: "true-false", text: "تسقط الأمطار بغزارة على مدار السنة في الصحراء.", answer: false },
+            { type: "true-false", text: "مصدر الطاقة الرئيسي في معظم الأنظمة البيئية هو الشمس.", answer: true },
+            { type: "true-false", text: "التلوث هو إضافة أشياء مفيدة إلى البيئة.", answer: false },
+            { type: "true-false", text: "من طرق حماية النظام البيئي إعادة التدوير.", answer: true },
+            { type: "true-false", text: "توجد البلاستيدات الخضراء في الخلية الحيوانية.", answer: false },
+            { type: "true-false", text: "بعض الأسماك ليس لها عظام، مثل القرش.", answer: true },
+            { type: "true-false", text: "التجربة اختبار يمكن من خلاله إثبات الفرضية أو رفضها.", answer: true },
+            { type: "true-false", text: "يؤثر المجتمع الحيوي بتغير إحدى جماعاته.", answer: true },
+            { type: "true-false", text: "المنتجات مخلوقات حية تصنع غذاءها بنفسها.", answer: true },
+            { type: "true-false", text: "جميع الخلايا النباتية تشبه الصناديق.", answer: true },
+            { type: "true-false", text: "بعض الطلائعيات تسبب أمراضًا خطيرة مثل مرض الملاريا.", answer: true },
+            { type: "true-false", text: "تعد البكتيريا والبدائيات أصغر المخلوقات الحية الدقيقة وأبسطها.", answer: true },
+            { type: "true-false", text: "الفطريات تصنع غذاءها بنفسها.", answer: false },
+            { type: "true-false", text: "المملكة هي المجموعة الكبرى التي تصنف إليها المخلوقات الحية.", answer: true },
+            { type: "true-false", text: "المنطقة الحيوية هي نظام بيئي كبير له نباتاته وحيواناته الخاصة.", answer: true },
+            { type: "true-false", text: "الموطن هو الدور الذي يقوم به المخلوق الحي في نظامه البيئي.", answer: false },
+            { type: "true-false", text: "الصحراء تتميز بقلة الأمطار ومناخها القاسي.", answer: true },
+            { type: "true-false", text: "يمكن للمخلوقات الحية أن تحدث تغيرات مفيدة أو ضارة في النظام البيئي.", answer: true },
+            { type: "true-false", text: "يزداد التنافس في النظام البيئي إذا نقصت موارده.", answer: true },
+            { type: "true-false", text: "يمكن حماية النظام البيئي بالتشجير وترشيد استهلاك الماء.", answer: true },
+            { type: "true-false", text: "تسمى النباتات بالمستهلكات.", answer: false },
+            { type: "true-false", text: "سميت الحيوانات اللافقارية بهذا الاسم لعدم وجود عمود فقري لها.", answer: true },
+            { type: "true-false", text: "الخلية الحيوانية لها جدار خلوي.", answer: false },
+            { type: "true-false", text: "الشعبة أكبر من الطائفة.", answer: true },
+            { type: "true-false", text: "الزواحف لها جلد جاف ومغطى بالحراشف.", answer: true },
+            { type: "true-false", text: "مجموعة السلاسل الغذائية المتداخلة تسمى شبكة غذائية.", answer: true },
+            { type: "true-false", text: "المواءمة هي استجابة المخلوق الحي للتغير في بيئته.", answer: true },
+            { type: "true-false", text: "من أمثلة المحللات الديدان والقوارض.", answer: false },
+            { type: "true-false", text: "الفجوة العصارية في الخلية النباتية كبيرة.", answer: true },
+            { type: "true-false", text: "وظيفة الجهاز الإخراجي هي تخليص الجسم من الفضلات.", answer: true },
+            { type: "true-false", text: "يتكون الجهاز الهضمي من الفم والمريء والمعدة والأمعاء.", answer: true },
+            { type: "true-false", text: "الإنسان والحيوانات من العوامل الطبيعية التي تغير النظام البيئي.", answer: false },
+            { type: "true-false", text: "الحيوانات المهددة بالانقراض هي التي قلت أعداد أفرادها.", answer: true },
+
+            // === Multiple Choice Questions (33 Questions) ===
+            { type: "multiple-choice", text: "اتفق العلماء على تقسيم المخلوقات الحية إلى _______ ممالك.", options: [{text:"خمس"}, {text:"ست"}, {text:"سبع"}], correctAnswer: 1 },
+            { type: "multiple-choice", text: "حيوان فقاري متغير درجة الحرارة وجلده رطب يعيش بالقرب من الماء.", options: [{text:"الضفدع"}, {text:"الخروف"}, {text:"الثعبان"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "جهاز يساعد على تفكيك الطعام وتحليله.", options: [{text:"الجهاز التنفسي"}, {text:"الجهاز الهضمي"}, {text:"الجهاز الإخراجي"}], correctAnswer: 1 },
+            { type: "multiple-choice", text: "مخلوقات حية تقوم بصنع غذائها بنفسها.", options: [{text:"المنتجات"}, {text:"المستهلكات"}, {text:"المحللات"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "إضافة أشياء ضارة إلى الماء أو الهواء أو التربة يسمى:", options: [{text:"المواءمة"}, {text:"التلوث"}, {text:"التكيف"}], correctAnswer: 1 },
+            { type: "multiple-choice", text: "بعد الحيوان الموضح بالصورة، فإنه يعتبر من:", image: "lion.png", options: [{text:"المحللات"}, {text:"المفترسات"}, {text:"آكلات الأعشاب"}], correctAnswer: 1 },
+            { type: "multiple-choice", text: "من الأنظمة البيئية على اليابسة:", options: [{text:"البحار"}, {text:"الأنهار"}, {text:"الغابات"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "صراع بين المخلوقات الحية على الموارد المحدودة يسمى:", options: [{text:"التنافس"}, {text:"التعايش"}, {text:"التقايض"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "مخلوقات حية تتغذى على النباتات والحيوانات معاً تسمى:", options: [{text:"القارتة"}, {text:"العاشبة"}, {text:"اللاحمة"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "يتم إخراج الفضلات عن طريق الجهاز:", options: [{text:"الإخراجي"}, {text:"الهضمي"}, {text:"الدوراني"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "اتحاد سلاسل غذائية متداخلة يسمى:", options: [{text:"نظام بيئي"}, {text:"شبكة غذائية"}, {text:"مجتمع حيوي"}], correctAnswer: 1 },
+            { type: "multiple-choice", text: "أي مما يلي يعد من العوامل اللاحيوية؟", options: [{text:"العشب"}, {text:"السلحفاة"}, {text:"الصخر"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "أصغر وحدة في بناء أجسام المخلوقات الحية هي:", options: [{text:"الجهاز الحيوي"}, {text:"العضو"}, {text:"النسيج"}, {text:"الخلية"}], correctAnswer: 3 },
+            { type: "multiple-choice", text: "أي المناطق الحيوية تسقط فيها أكبر كمية من الأمطار؟", options: [{text:"الصحراء"}, {text:"التندرا"}, {text:"الغابات الاستوائية المطيرة"}, {text:"المنطقة القطبية"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "أكبر مستويات التصنيف التي تضم المخلوقات الحية:", options: [{text:"المملكة"}, {text:"الشعبة"}, {text:"الطائفة"}, {text:"الرتبة"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "كل الجماعات التي تعيش في نظام بيئي معين تكون:", options: [{text:"الموطن"}, {text:"العوامل اللاحيوية"}, {text:"المجتمع الحيوي"}, {text:"العشيرة"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "أي الممالك التالية يصنع جميع أفرادها غذاءها بنفسها؟", options: [{text:"الفطريات"}, {text:"الحيوانات"}, {text:"النباتات"}, {text:"البكتيريا"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "الجهاز الذي يتحكم في جميع أجهزة الجسم هو الجهاز:", options: [{text:"العصبي"}, {text:"الهضمي"}, {text:"الإخراجي"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "يتكون الجهاز العضلي من:", options: [{text:"العضلات"}, {text:"الأعصاب"}, {text:"الهيكل العظمي"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "يعتبر من أعضاء الجهاز الهضمي:", options: [{text:"المعدة"}, {text:"الرئتين"}, {text:"القلب"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "تقع معظم أراضي الوطن العربي في منطقة حيوية كبيرة هي منطقة:", options: [{text:"الغابة"}, {text:"المنطقة العشبية"}, {text:"الصحراء"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "يعتبر الفطر من:", options: [{text:"المنتجات"}, {text:"المستهلكات"}, {text:"المحللات"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "أحد أنواع الكوارث الطبيعية:", options: [{text:"التلوث"}, {text:"قطع الأشجار"}, {text:"البراكين"}], correctAnswer: 2 },
+            { type: "multiple-choice", text: "مجموعة من الأنسجة المختلفة تعمل معًا لأداء وظيفة محددة:", options: [{text:"العضو"}, {text:"الجهاز الحيوي"}, {text:"الجماعة الحيوية"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "تراكيب الخلية التي تنتج الطاقة هي:", options: [{text:"النواة"}, {text:"الميتوكندريا"}, {text:"الغشاء الخلوي"}], correctAnswer: 1 },
+            { type: "multiple-choice", text: "يسمى المكان الذي يعيش فيه المخلوق الحي:", options: [{text:"الموطن"}, {text:"الجماعة الحيوية"}, {text:"النظام البيئي"}], correctAnswer: 0 },
+            { type: "multiple-choice", text: "السحلية حيوان فقاري متغير درجة الحرارة وينتمي إلى:", options: [{text:"الزواحف"}, {text:"الثدييات"}, {text:"الأسماك"}], correctAnswer: 0 },
+            {
+                type: "multiple-choice",
+                text: "أي من التالي يمثل الجهاز الهضمي؟",
+                options: [
+                    { image: "stomach.png", text: "أ" }, // Placeholder, assuming digestive system icon
+                    { image: "skeleton.png", text: "ب" },
+                    { image: "circulatory system.png", text: "ج" },
+                    { image: "nevous system.png", text: "د" }
+                ],
+                correctAnswer: 0
+            },
+            {
+                type: "multiple-choice",
+                text: "أي من هذه الصور يمثل حيوانًا لا فقاريًا؟",
+                options: [ { image: "butterfly.png", text: "الفراشة" }, { image: "pigeon.png", text: "الحمامة" }, { image: "rabbit.png", text: "الأرنب" }, ],
+                correctAnswer: 0
+            },
+            {
+                type: "multiple-choice",
+                text: "الشكل الذي يمثل نموذجًا للخلية النباتية هو:",
+                options: [ { image: "plant cell.jpg", text: "أ" }, { image: "animal cell.png", text: "ب" }, { image: "bacteria.png", text: "ج" }, ],
+                correctAnswer: 0
+            },
+            {
+                type: "multiple-choice",
+                text: "العضو الرئيسي في الجهاز الدوري هو:",
+                options: [ { image: "brain.webp", text: "الدماغ" }, { image: "stomach.png", text: "المعدة" }, { image: "heart.png", text: "القلب" }, ],
+                correctAnswer: 2
+            },
+            {
+                type: "multiple-choice",
+                text: "توجد هذه التراكيب في الخلية النباتية فقط:",
+                options: [ { image: "mitocondria.png", text: "الميتوكندريا" }, { image: "chloroplasts.png", text: "البلاستيدات الخضراء" }, { image: "nucleus.png", text: "النواة" }, ],
+                correctAnswer: 1
+            },
+             {
+                type: "multiple-choice",
+                text: "من الحيوانات المنقرضة:",
+                options: [ { image: "goat.webp", text: "الماعز" }, { image: "dinosaur.png", text: "الديناصور" }, { image: "elephant.jpg", text: "الفيل" }, ],
+                correctAnswer: 1
+            },
+
+            // === Matching Questions (3 Questions) ===
+            {
+                type: "matching",
+                text: "صل كل مصطلح بما يناسبه.",
+                pairs: [
+                    { left: "اللافقاريات", right: "حيوانات ليس لها عمود فقري", id: 1 },
+                    { left: "الخلية", right: "أصغر تركيب في المخلوق الحي", id: 2 },
+                    { left: "الموطن", right: "مكان يعيش فيه المخلوق الحي", id: 3 },
+                    { left: "الانقراض", right: "اختفاء جميع أفراد النوع", id: 4 },
+                    { left: "الوراثة", right: "انتقال الصفات من الآباء للأبناء", id: 5 }
+                ]
+            },
+            {
+                type: "matching",
+                text: "صل كل جهاز بوظيفته.",
+                pairs: [
+                    { left: "الجهاز الهضمي", right: "تفكيك الطعام وتحليله", id: 1 },
+                    { left: "الجهاز العصبي", right: "التحكم في جميع أجهزة الجسم", id: 2 },
+                    { left: "الجهاز الهيكلي", right: "يدعم الجسم ويحمي الأعضاء", id: 3 },
+                    { left: "الجهاز العضلي", right: "يساعد الجسم على الحركة", id: 4 },
+                    { left: "الجهاز الإخراجي", right: "التخلص من الفضلات", id: 5 }
+                ]
+            },
+            {
+                type: "matching",
+                text: "صل المخلوق بمجموعته.",
+                pairs: [
+                    { left: "الفراشة", right: "المفصليات", id: 1 },
+                    { left: "قنديل البحر", right: "اللاسعات", id: 2 },
+                    { left: "الخروف", right: "الثدييات", id: 3 },
+                    { left: "العصفور", right: "الطيور", id: 4 },
+                    { left: "الثعبان", right: "الزواحف", id: 5 }
+                ]
+            },
+
+            // === Compare Question (1 Question) ===
+            {
+                type: "compare",
+                text: "قارن بين الخلية النباتية والحيوانية بكتابة 'نعم' أو 'لا'.",
+                headers: ["وجه المقارنة", "الخلية الحيوانية", "الخلية النباتية"],
+                rows: [
+                    { aspect: "الجدار الخلوي", animal: "لا", plant: "نعم" },
+                    { aspect: "النواة", animal: "نعم", plant: "نعم" },
+                    { aspect: "السيتوبلازم", animal: "نعم", plant: "نعم" },
+                    { aspect: "البلاستيدات الخضراء", animal: "لا", plant: "نعم" }
+                ]
+            },
+
+            // === Fill-in-the-Blank Questions (13 Questions) ===
+            { type: "fill-blank", text: "أكمل: النسيج مجموعة من الخلايا ________.", answer: ["متماثلة", "متشابهة"] },
+            { type: "fill-blank", text: "أكمل: الفجوات تخزن الماء والغذاء و________ في الخلية.", answer: ["فضلات", "الفضلات"] },
+            { type: "fill-blank", text: "أكمل: انتقال الصفات من الآباء إلى الأبناء يسمى ________.", answer: ["وراثة", "الوراثة"] },
+            { type: "fill-blank", text: "أكمل: الميتوكندريا هي مصنع ________ في الخلية.", answer: ["طاقة", "الطاقة"] },
+            { type: "fill-blank", text: "أكمل: إضافة أشياء ضارة للبيئة يسمى ________.", answer: ["تلوث", "التلوث"] },
+            { type: "fill-blank", text: "أكمل: ________ مخلوقات تحلل المواد الميتة للحصول على الطاقة.", answer: ["محللات", "المحللات"] },
+            { type: "fill-blank", text: "أكمل: ترتيب مستويات التنظيم: خلية -> نسيج -> ________ -> جهاز.", answer: ["عضو", "العضو"] },
+            { type: "fill-blank", text: "أكمل: جهاز يعمل على هضم الطعام هو الجهاز ________.", answer: ["هضمي", "الهضمي"] },
+            { type: "fill-blank", text: "أكمل: ________ هو تفاعل المخلوقات الحية مع الأشياء غير الحية.", answer: ["نظام بيئي", "النظام البيئي"] },
+            { type: "fill-blank", text: "أكمل: ________ حيوانات ليس لها عمود فقري.", answer: ["لافقاريات", "اللافقاريات"] },
+            { type: "fill-blank", text: "أكمل: ________ هو اختفاء جميع أفراد نوع ما.", answer: ["انقراض", "الانقراض"] },
+            { type: "fill-blank", text: "أكمل: ________ مخلوقات حية مثل النباتات تصنع غذاءها.", answer: ["منتجات", "المنتجات"] },
+            { type: "fill-blank", text: "أكمل: يدعم العمود الفقري الجسم ويسهل ________.", answer: ["حركة", "الحركة"] },
+
+            // === Ordering Question (1 Question) ===
+            {
+                type: "ordering",
+                text: "رتب السلسلة الغذائية التالية من 1 إلى 4.",
+                items: [
+                    { text: "جزر", image: "food_chain_carrot.png" },
+                    { text: "أرنب", image: "food_chain_rabbit.png" },
+                    { text: "ثعلب", image: "food_chain_fox.png" },
+                    { text: "أسد", image: "food_chain_lion.png" }
+                ],
+                correctOrder: [1, 2, 3, 4]
+            }
+        ];
+        
+        let currentGameQuestions = [];
+
+        // NEW ROBUST AUDIO INITIALIZATION
+        function initAudioContext() {
+            if (isAudioInitialized) return;
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                isAudioInitialized = true;
+                console.log("Audio context initialized successfully.");
+            } catch (e) {
+                console.error("Web Audio API is not supported in this browser.", e);
+            }
+        }
+
+        function playMusic() {
+            if (isSoundEnabled && backgroundMusic.src && backgroundMusic.paused) {
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                const playPromise = backgroundMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => console.error("Error playing background music:", error));
+                }
+            }
+        }
+
+        function startGame() {
+            initAudioContext(); // Initialize audio on first real interaction
+            playSound('start');
+            playMusic();
+            
+            score = 0;
+            currentQuestionIndex = 0;
+            wrongAttempts = 0;
+            lastQuestionType = null;
+            scoreValue.textContent = score;
+            
+            currentGameQuestions = [...questions].sort(() => Math.random() - 0.5);
+            totalQuestions.textContent = currentGameQuestions.length;
+            maxScore.textContent = currentGameQuestions.length * 10;
+            
+            startScreen.style.display = 'none';
+            endScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            document.getElementById('pause-btn').classList.add('active');
+            
+            showQuestion();
+            saveProgress();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= currentGameQuestions.length) { endGame(); return; }
+            
+            const question = currentGameQuestions[currentQuestionIndex];
+            
+            if (question.type !== lastQuestionType && lastQuestionType !== null) {
+                playSound('notification', 0.8);
+            }
+            lastQuestionType = question.type;
+            
+            playSound('transition', 0.6);
+            wrongAttempts = 0;
+            
+            questionNumber.textContent = currentQuestionIndex + 1;
+            questionHeader.textContent = getQuestionTypeTitle(question.type);
+            questionText.textContent = question.text;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / currentGameQuestions.length) * 100}%`;
+            optionsContainer.innerHTML = '';
+            
+            questionImageContainer.innerHTML = '';
+            questionImageContainer.style.display = 'block';
+
+            if (question.image) {
+                const img = document.createElement('img');
+                img.className = 'question-image';
+                img.src = `assets/img/${question.image}`; // MODIFIED: Use local path
+                img.onerror = () => handleImageError(question.image, img, questionImageContainer);
+                questionImageContainer.appendChild(img);
+            } else {
+                questionImageContainer.style.display = 'none';
+            }
+
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+            }
+            
+            setTimeout(() => {
+                if (question.type === "true-false") renderTrueFalse(question);
+                else if (question.type === "multiple-choice") renderMultipleChoice(question);
+                else if (question.type === "matching") renderMatching(question);
+                else if (question.type === "compare") renderCompare(question);
+                else if (question.type === "fill-blank") renderFillBlank(question);
+                else if (question.type === "ordering") renderOrdering(question);
+            }, 100);
+        }
+        
+        function handleImageError(filename, imgElement, container) {
+            if (adminMode) {
+                container.innerHTML = ''; // Clear previous content
+                const errorDiv = document.createElement('div');
+                errorDiv.innerHTML = `وضع المشرف: فشل تحميل <strong>${filename}</strong>.`;
+                errorDiv.style.color = 'red';
+                errorDiv.style.marginBottom = '10px';
+                
+                const uploadBtn = document.createElement('button');
+                uploadBtn.className = 'btn';
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> رفع صورة';
+                uploadBtn.style.backgroundImage = 'linear-gradient(to right, #f57b51 0%, #FFD700 100%)';
+                uploadBtn.onclick = () => showImageUploadModal(filename, imgElement);
+                
+                errorDiv.appendChild(uploadBtn);
+                container.appendChild(errorDiv);
+            } else {
+                container.style.display = 'none';
+                console.error(`Failed to load image: assets/img/${filename}`);
+            }
+        }
+
+        function renderMultipleChoice(question) {
+            optionsContainer.className = 'options-container';
+             if (question.options.length === 3) {
+                optionsContainer.style.gridTemplateColumns = '1fr';
+            } else {
+                optionsContainer.style.gridTemplateColumns = '1fr 1fr';
+            }
+
+            const optionData = question.options.map((opt, index) => ({ ...opt, originalIndex: index }));
+            optionData.sort(() => Math.random() - 0.5); 
+
+            optionData.forEach(item => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                
+                if (item.image) {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.className = 'option-image-container';
+                    const img = document.createElement('img');
+                    img.src = `assets/img/${item.image}`; // MODIFIED: Use local path
+
+                    img.onerror = () => {
+                        if (adminMode) {
+                            imgContainer.innerHTML = ''; 
+                            const uploadBtn = document.createElement('button');
+                            uploadBtn.className = 'btn btn-small';
+                            uploadBtn.innerHTML = '<i class="fas fa-upload"></i> رفع';
+                            uploadBtn.title = `رفع صورة ${item.image}`;
+                            uploadBtn.style.backgroundImage = 'linear-gradient(to right, #f57b51 0%, #FFD700 100%)';
+                            uploadBtn.onclick = (e) => {
+                                e.stopPropagation(); 
+                                showImageUploadModal(item.image, img);
+                            };
+                            imgContainer.appendChild(uploadBtn);
+                        } else {
+                            imgContainer.style.display = 'none';
+                            console.error(`Failed to load image: assets/img/${item.image}`);
+                        }
+                    };
+
+                    imgContainer.appendChild(img);
+                    optionElement.appendChild(imgContainer);
+                }
+
+                if (item.text) {
+                    const textSpan = document.createElement('span');
+                    textSpan.className = 'option-text';
+                    textSpan.textContent = item.text;
+                    optionElement.appendChild(textSpan);
+                }
+
+                optionElement.addEventListener('click', () => checkAnswer(item.originalIndex, question.correctAnswer, optionElement, optionData));
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        function renderMatching(question) {
+            optionsContainer.className = 'matching-game-container';
+            selectedLeft = null; matchedPairs = [];
+            const instruction = document.createElement('div');
+            instruction.className = 'matching-instruction';
+            instruction.innerHTML = '<i class="fas fa-hand-pointer"></i> صل كل عنصر من العمود الأول بما يناسبه من العمود الثاني.';
+            optionsContainer.appendChild(instruction);
+            const board = document.createElement('div');
+            board.className = 'matching-board';
+            matchingCanvas = document.createElement('canvas');
+            matchingCanvas.className = 'matching-canvas';
+            board.appendChild(matchingCanvas);
+            const columnsContainer = document.createElement('div');
+            columnsContainer.className = 'matching-columns';
+            const leftColumn = document.createElement('div');
+            leftColumn.className = 'matching-column';
+            const rightColumn = document.createElement('div');
+            rightColumn.className = 'matching-column';
+            const shuffledLeft = [...question.pairs].sort(() => Math.random() - 0.5);
+            const shuffledRight = [...question.pairs].sort(() => Math.random() - 0.5);
+            shuffledLeft.forEach(pair => {
+                const item = document.createElement('div');
+                item.className = 'matching-item left-item';
+                item.textContent = pair.left;
+                item.dataset.id = pair.id;
+                item.addEventListener('click', () => selectMatchingItem(item, 'left'));
+                leftColumn.appendChild(item);
+            });
+            shuffledRight.forEach(pair => {
+                const item = document.createElement('div');
+                item.className = 'matching-item right-item';
+                item.textContent = pair.right;
+                item.dataset.id = pair.id;
+                item.addEventListener('click', () => selectMatchingItem(item, 'right'));
+                rightColumn.appendChild(item);
+            });
+            columnsContainer.appendChild(leftColumn);
+            columnsContainer.appendChild(rightColumn);
+            board.appendChild(columnsContainer);
+            optionsContainer.appendChild(board);
+            
+            const redrawLines = () => {
+                if(board.offsetWidth > 0 && matchingCanvas){
+                    matchingCanvas.width = board.offsetWidth;
+                    matchingCanvas.height = board.offsetHeight;
+                    matchingCtx = matchingCanvas.getContext('2d');
+                    matchingCtx.clearRect(0, 0, matchingCanvas.width, matchingCanvas.height);
+                    matchedPairs.forEach(p => drawLine(p.left, p.right));
+                }
+            };
+            
+            setTimeout(redrawLines, 150);
+            
+            resizeObserver = new ResizeObserver(redrawLines);
+            resizeObserver.observe(board);
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'btn';
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> تحقق';
+            submitBtn.style.marginTop = '20px';
+            submitBtn.addEventListener('click', () => checkMatching(question, submitBtn));
+            optionsContainer.appendChild(submitBtn);
+        }
+
+        function renderCompare(question) {
+            optionsContainer.className = 'compare-container';
+            const table = document.createElement('table');
+            table.className = 'compare-table';
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            question.headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+            question.rows.forEach((row) => {
+                const tr = document.createElement('tr');
+                const aspectTd = document.createElement('td');
+                aspectTd.textContent = row.aspect;
+                tr.appendChild(aspectTd);
+
+                const animalTd = document.createElement('td');
+                animalTd.setAttribute('data-label', question.headers[1]); // For mobile view
+                const animalInput = document.createElement('input');
+                animalInput.className = 'compare-input';
+                animalInput.placeholder = '...';
+                animalInput.dataset.correct = row.animal;
+                animalTd.appendChild(animalInput);
+                tr.appendChild(animalTd);
+
+                const plantTd = document.createElement('td');
+                plantTd.setAttribute('data-label', question.headers[2]); // For mobile view
+                const plantInput = document.createElement('input');
+                plantInput.className = 'compare-input';
+                plantInput.placeholder = '...';
+                plantInput.dataset.correct = row.plant;
+                plantTd.appendChild(plantInput);
+                tr.appendChild(plantTd);
+                
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            optionsContainer.appendChild(table);
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'btn';
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> تحقق';
+            submitBtn.style.marginTop = '20px';
+            submitBtn.addEventListener('click', () => checkCompare(question, submitBtn));
+            optionsContainer.appendChild(submitBtn);
+        }
+
+        function renderFillBlank(question) {
+            optionsContainer.className = 'options-container';
+            optionsContainer.style.gridTemplateColumns = '1fr';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'fill-blank-input';
+            input.placeholder = 'اكتب الإجابة هنا...';
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'btn';
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> تحقق';
+            const check = () => checkFillBlank(input.value.trim(), question.answer, input, submitBtn);
+            submitBtn.addEventListener('click', check);
+            input.addEventListener('keypress', (e) => { if (e.key === 'Enter') check(); });
+            optionsContainer.appendChild(input);
+            optionsContainer.appendChild(submitBtn);
+            input.focus();
+        }
+
+        function renderTrueFalse(question) {
+            optionsContainer.className = 'true-false-container';
+            const trueBtn = document.createElement('div');
+            trueBtn.className = 'tf-option tf-true';
+            trueBtn.innerHTML = '<i class="fas fa-check-circle"></i><span>صح</span>';
+            trueBtn.addEventListener('click', () => checkTrueFalse(true, question.answer, trueBtn));
+            const falseBtn = document.createElement('div');
+            falseBtn.className = 'tf-option tf-false';
+            falseBtn.innerHTML = '<i class="fas fa-times-circle"></i><span>خطأ</span>';
+            falseBtn.addEventListener('click', () => checkTrueFalse(false, question.answer, falseBtn));
+            optionsContainer.appendChild(trueBtn);
+            optionsContainer.appendChild(falseBtn);
+        }
+
+        function renderOrdering(question) {
+            optionsContainer.className = 'ordering-container';
+            const shuffledItems = [...question.items].sort(() => Math.random() - 0.5);
+            shuffledItems.forEach(itemData => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'ordering-item';
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'ordering-input';
+                input.min = 1;
+                input.max = question.items.length;
+                input.dataset.item = itemData.text;
+                
+                const textSpan = document.createElement('span');
+                textSpan.className = 'ordering-text';
+                
+                if (itemData.image) {
+                    const img = document.createElement('img');
+                    img.src = `assets/img/${itemData.image}`; // MODIFIED: Use local path
+                    img.onerror = () => { img.style.display = 'none'; console.error(`Failed to load image: assets/img/${itemData.image}`); };
+                    textSpan.appendChild(img);
+                }
+                textSpan.append(itemData.text);
+                
+                itemDiv.appendChild(input);
+                itemDiv.appendChild(textSpan);
+                optionsContainer.appendChild(itemDiv);
+            });
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'btn';
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> تحقق';
+            submitBtn.style.marginTop = '20px';
+            submitBtn.addEventListener('click', () => checkOrdering(question, submitBtn));
+            optionsContainer.appendChild(submitBtn);
+        }
+        
+        function checkTrueFalse(selected, correct, element) {
+            Array.from(optionsContainer.children).forEach(opt => opt.style.pointerEvents = 'none');
+            if (selected === correct) { handleCorrectAnswer(); element.classList.add('correct'); } 
+            else {
+                handleWrongAnswer(() => element.classList.add('wrong'), 
+                                  () => { Array.from(optionsContainer.children).forEach(opt => opt.style.pointerEvents = 'auto'); }, 
+                                  'الإجابة الصحيحة هي: ' + (correct ? 'صح' : 'خطأ'));
+            }
+        }
+
+        function checkAnswer(selectedIndex, correctIndex, element, allOptions) {
+            Array.from(optionsContainer.children).forEach(opt => opt.style.pointerEvents = 'none');
+            
+            if (selectedIndex === correctIndex) {
+                element.classList.add('correct');
+                handleCorrectAnswer();
+            } else {
+                handleWrongAnswer(() => element.classList.add('wrong'), 
+                                  () => { Array.from(optionsContainer.children).forEach(opt => opt.style.pointerEvents = 'auto'); }, 
+                                  'الإجابة الصحيحة تم تظليلها بالأخضر.', 
+                                  () => {
+                                      const correctOptionElement = Array.from(optionsContainer.children).find((opt, i) => {
+                                          const optionData = allOptions.find(d => d.originalIndex === correctIndex);
+                                          return opt.innerHTML.includes(optionData.image) || (optionData.text && opt.textContent.includes(optionData.text));
+                                      });
+                                      if(correctOptionElement) correctOptionElement.classList.add('correct');
+                                      setTimeout(nextQuestion, 2500);
+                                  });
+            }
+        }
+
+        function checkFillBlank(userAnswer, correctKeywords, input, button) {
+            button.disabled = true;
+            const normalizedUser = userAnswer.toLowerCase().trim().replace(/^ال/, '');
+            let isCorrect = correctKeywords.some(keyword => {
+                const normalizedKeyword = keyword.toLowerCase().trim().replace(/^ال/, '');
+                return normalizedUser === normalizedKeyword && normalizedUser.length > 0;
+            });
+            
+            if (isCorrect) {
+                input.style.borderColor = 'var(--green)';
+                handleCorrectAnswer();
+            } else {
+                handleWrongAnswer(() => { input.style.animation = 'shakeWrong 0.5s'; input.style.borderColor = 'var(--red)'; }, 
+                                  () => { input.style.animation = ''; input.style.borderColor = 'var(--purple)'; input.value = ''; input.focus(); button.disabled = false; }, 
+                                  `الإجابة الصحيحة: ${correctKeywords[0]}`, 
+                                  () => { input.value = correctKeywords[0]; input.style.borderColor = 'var(--green)'; setTimeout(nextQuestion, 2500); });
+            }
+        }
+        
+        function selectMatchingItem(item, side) {
+            if (item.classList.contains('matched')) return;
+            
+            if (side === 'left') {
+                playSound('select', 0.8);
+                document.querySelectorAll('.left-item.selected').forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+                selectedLeft = item;
+            } else if (side === 'right' && selectedLeft) {
+                if (selectedLeft.dataset.id === item.dataset.id) {
+                    selectedLeft.classList.add('matched'); item.classList.add('matched');
+                    matchedPairs.push({ left: selectedLeft, right: item });
+                    drawLine(selectedLeft, item);
+                    playSound('match', 0.9);
+                    selectedLeft.classList.remove('selected'); selectedLeft = null;
+                } else {
+                    playSound('wrong');
+                    item.style.animation = 'shakeWrong 0.5s';
+                    setTimeout(() => item.style.animation = '', 500);
+                }
+            }
+        }
+
+        function drawLine(leftItem, rightItem) {
+            if (!matchingCtx) return;
+            const board = leftItem.closest('.matching-board');
+            const boardRect = board.getBoundingClientRect();
+            const leftRect = leftItem.getBoundingClientRect();
+            const rightRect = rightItem.getBoundingClientRect();
+            
+            const startX = leftRect.right - boardRect.left;
+            const startY = leftRect.top + leftRect.height / 2 - boardRect.top;
+            const endX = rightRect.left - boardRect.left;
+            const endY = rightRect.top + rightRect.height / 2 - boardRect.top;
+            
+            matchingCtx.strokeStyle = 'var(--green)'; matchingCtx.lineWidth = 5; matchingCtx.lineCap = 'round';
+            matchingCtx.beginPath(); matchingCtx.moveTo(startX, startY); matchingCtx.lineTo(endX, endY); matchingCtx.stroke();
+        }
+
+        function checkMatching(question, button) {
+            button.disabled = true;
+            if (matchedPairs.length === question.pairs.length) { handleCorrectAnswer(); } 
+            else {
+                handleWrongAnswer(null, () => button.disabled = false, `أكمل باقي التوصيلات!`);
+            }
+        }
+        
+        function checkCompare(question, button) {
+            button.disabled = true;
+            const inputs = document.querySelectorAll('.compare-input');
+            let correctCount = 0;
+            inputs.forEach(input => {
+                if (input.value.trim().toLowerCase() === input.dataset.correct.toLowerCase()) { correctCount++; input.className = 'compare-input correct-answer'; } 
+                else { input.className = 'compare-input wrong-answer'; }
+            });
+            if (correctCount === inputs.length) { handleCorrectAnswer(); } 
+            else {
+                handleWrongAnswer(null, () => button.disabled = false, `لديك ${inputs.length - correctCount} إجابات خاطئة.`, 
+                                  () => { inputs.forEach(input => { input.value = input.dataset.correct; input.className = 'compare-input correct-answer'; }); setTimeout(nextQuestion, 3000); });
+            }
+        }
+        
+        function checkOrdering(question, button) {
+            button.disabled = true;
+            const inputs = document.querySelectorAll('.ordering-input');
+            let isCorrect = true;
+            const originalItems = question.items.map(i => i.text);
+            
+            inputs.forEach(input => {
+                const itemText = input.dataset.item;
+                const userValue = parseInt(input.value);
+                const correctValue = question.correctOrder[originalItems.indexOf(itemText)];
+                if (userValue !== correctValue) {
+                    isCorrect = false;
+                }
+            });
+
+            if (isCorrect) {
+                 inputs.forEach(input => input.classList.add('correct-answer'));
+                 handleCorrectAnswer();
+            } else {
+                handleWrongAnswer(() => {
+                    inputs.forEach(input => {
+                       const itemIndex = originalItems.indexOf(input.dataset.item);
+                       const correctValue = question.correctOrder[itemIndex];
+                       input.className = parseInt(input.value) === correctValue ? 'ordering-input correct-answer' : 'ordering-input wrong-answer';
+                    });
+                }, () => button.disabled = false, "الترتيب غير صحيح، تم تصحيح الأخطاء.", 
+                   () => {
+                    inputs.forEach(input => {
+                        const itemIndex = originalItems.indexOf(input.dataset.item);
+                        input.value = question.correctOrder[itemIndex];
+                        input.className = 'ordering-input correct-answer';
+                    });
+                    setTimeout(nextQuestion, 3000);
+                });
+            }
+        }
+        
+        function triggerScreenFlash(type) {
+            screenFlash.className = `screen-flash ${type}`;
+            setTimeout(() => {
+                screenFlash.className = 'screen-flash';
+            }, 500);
+        }
+
+        function handleCorrectAnswer() {
+            playSound('correct'); 
+            triggerScreenFlash('correct');
+            
+            const previousScore = score;
+            score += 10;
+            
+            if (Math.floor(previousScore / 50) < Math.floor(score / 50)) {
+                setTimeout(() => playSound('milestone', 0.9), 300);
+                showNotification(`رائع! لقد وصلت إلى ${score} نقطة!`, 'success');
+            } else {
+                showNotification('إجابة صحيحة! أحسنت', 'success');
+            }
+            
+            scoreValue.textContent = score;
+            setTimeout(nextQuestion, 1500);
+        }
+
+        function handleWrongAnswer(onWrong, onRetry, finalMessage, onFinal) {
+            wrongAttempts++; 
+            playSound('wrong');
+            triggerScreenFlash('wrong');
+            if(onWrong) onWrong();
+            if (wrongAttempts < 2) {
+                showRetryMessage('حاول مرة أخرى! فكر جيداً');
+                setTimeout(() => { if(onRetry) onRetry(); }, 1500);
+            } else {
+                showNotification(finalMessage, 'error');
+                if(onFinal) onFinal();
+                else setTimeout(nextQuestion, 2500);
+            }
+        }
+
+        function showRetryMessage(message) {
+            const existingMsg = document.querySelector('.retry-message');
+            if(existingMsg) existingMsg.remove();
+            const retryMsg = document.createElement('div');
+            retryMsg.className = 'retry-message';
+            retryMsg.innerHTML = `<i class="fas fa-redo"></i> ${message}`;
+            questionText.parentNode.insertBefore(retryMsg, questionText.nextSibling);
+            setTimeout(() => { if(retryMsg) retryMsg.remove() }, 2000);
+        }
+
+        function nextQuestion() { 
+            currentQuestionIndex++; 
+            saveProgress(); 
+            showQuestion(); 
+        }
+
+        function endGame() {
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0;
+            gameScreen.style.display = 'none'; 
+            endScreen.style.display = 'block';
+            finalScore.textContent = score;
+            document.getElementById('pause-btn').classList.remove('active');
+            playSound('win');
+            createConfetti();
+            clearProgress();
+        }
+
+        function getQuestionTypeTitle(type) {
+            const titles = {
+                'true-false': 'سؤال صح أو خطأ', 'multiple-choice': 'سؤال اختيار من متعدد',
+                'matching': 'سؤال التوصيل', 'compare': 'سؤال المقارنة',
+                'fill-blank': 'سؤال أكمل الفراغ', 'ordering': 'سؤال الترتيب'
+            };
+            return titles[type] || 'سؤال';
+        }
+
+        function saveProgress() {
+            const progress = {
+                score, currentQuestionIndex,
+                questions: currentGameQuestions.map(q => q.text),
+                timestamp: Date.now()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const progress = JSON.parse(saved);
+                if (Date.now() - progress.timestamp < 24 * 60 * 60 * 1000) return progress;
+            }
+            return null;
+        }
+        
+        function clearProgress() { localStorage.removeItem(STORAGE_KEY); }
+
+        function playSound(type, volume = 0.7) {
+            if (!isSoundEnabled || !isAudioInitialized) return;
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            const sound = document.getElementById(`${type}-sound`);
+            if (sound) { 
+                sound.volume = volume;
+                sound.currentTime = 0; 
+                const playPromise = sound.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => console.warn(`Could not play sound: ${type}.`, error));
+                }
+            }
+        }
+
+        function showNotification(message, type) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            container.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
+        }
+
+        function createConfetti() {
+            playSound('confetti', 0.8);
+            const endScreenContainer = document.getElementById('end-screen');
+            for (let i = 0; i < 200; i++) {
+                const confetti = document.createElement('div');
+                const size = Math.random() * 10 + 5;
+                confetti.style.cssText = `
+                    position: absolute; 
+                    width: ${size}px; 
+                    height: ${size}px; 
+                    background: hsl(${Math.random() * 360}, 100%, 50%); 
+                    left: ${Math.random() * 100}%; 
+                    top: -20px; 
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                    animation: fall ${Math.random() * 3 + 2}s linear ${Math.random() * 2}s forwards; 
+                    z-index: 0;
+                `;
+                endScreenContainer.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+        const fallAnimationStyle = document.createElement('style');
+        fallAnimationStyle.textContent = `@keyframes fall { to { transform: translateY(110vh) rotate(${Math.random() * 720}deg); opacity: 0; } }`;
+        document.head.appendChild(fallAnimationStyle);
+        
+        function setupEventListeners() {
+            soundToggle.addEventListener('click', () => {
+                isSoundEnabled = !isSoundEnabled;
+                soundToggle.innerHTML = isSoundEnabled ? '<i class="fas fa-volume-up"></i>' : '<i class="fas fa-volume-mute"></i>';
+                if (isSoundEnabled) {
+                    initAudioContext(); // Ensure context is active when unmuting
+                    playSound('click');
+                    if (gameScreen.style.display === 'block' && !isPaused) {
+                       playMusic();
+                    }
+                } else {
+                    backgroundMusic.pause();
+                }
+            });
+            
+            document.querySelectorAll('.btn, .option, .tf-option, .floating-btn').forEach(el => {
+                el.addEventListener('mouseover', () => playSound('hover', 0.2));
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || document.querySelector('.modal-overlay.active')) return;
+                adminKeys += e.key.toLowerCase();
+                clearTimeout(adminTimeout);
+                adminTimeout = setTimeout(() => { adminKeys = ''; }, 2000);
+                if (adminKeys.includes('admin')) {
+                    adminMode = !adminMode;
+                    adminSkipBtn.classList.toggle('active', adminMode);
+                    adminBackBtn.classList.toggle('active', adminMode);
+                    adminSettingsBtn.classList.toggle('active', adminMode);
+                    adminAudioBtn.classList.toggle('active', adminMode);
+                    document.getElementById('admin-indicator').classList.toggle('active', adminMode);
+                    showNotification(adminMode ? 'وضع المشرف مفعّل!' : 'وضع المشرف معطّل', adminMode ? 'success' : 'error');
+                    if (gameScreen.style.display === 'block') showQuestion();
+                    adminKeys = '';
+                }
+            });
+
+            adminBackBtn.addEventListener('click', () => {
+                playSound('click');
+                if (adminMode && gameScreen.style.display === 'block' && currentQuestionIndex > 0) {
+                    score = Math.max(0, score - 10);
+                    scoreValue.textContent = score;
+                    currentQuestionIndex--;
+                    showNotification('الرجوع للسؤال السابق', 'error');
+                    showQuestion();
+                }
+            });
+
+            adminSkipBtn.addEventListener('click', () => {
+                playSound('click');
+                if (adminMode && gameScreen.style.display === 'block') {
+                    score += 10; scoreValue.textContent = score;
+                    showNotification('تم تخطي السؤال', 'success');
+                    nextQuestion();
+                }
+            });
+            
+            startBtn.addEventListener('click', startGame);
+            restartBtn.addEventListener('click', () => { playSound('click'); endScreen.style.display = 'none'; clearProgress(); startGame(); });
+
+            document.getElementById('pause-btn').addEventListener('click', () => { playSound('click'); backgroundMusic.pause(); if (gameScreen.style.display === 'block') { isPaused = true; document.getElementById('pause-overlay').classList.add('active'); } });
+            document.getElementById('resume-btn').addEventListener('click', () => { playSound('click'); playMusic(); isPaused = false; document.getElementById('pause-overlay').classList.remove('active'); });
+            document.getElementById('restart-game-btn').addEventListener('click', () => { playSound('click'); isPaused = false; document.getElementById('pause-overlay').classList.remove('active'); gameScreen.style.display = 'none'; clearProgress(); startGame(); });
+            document.getElementById('exit-btn').addEventListener('click', () => { playSound('click'); isPaused = false; backgroundMusic.pause(); backgroundMusic.currentTime = 0; document.getElementById('pause-overlay').classList.remove('active'); gameScreen.style.display = 'none'; startScreen.style.display = 'block'; document.getElementById('pause-btn').classList.remove('active'); const continueBtn = document.querySelector('.continue-btn'); if(continueBtn) continueBtn.style.display = 'block'; });
+            document.addEventListener('visibilitychange', () => { if (document.hidden && gameScreen.style.display === 'block' && !isPaused) document.getElementById('pause-btn').click(); });
+            
+            // Image Settings Modal Events
+            adminSettingsBtn.addEventListener('click', () => {
+                playSound('click');
+                document.getElementById('github-user').value = githubConfig.user;
+                document.getElementById('github-repo').value = githubConfig.repo;
+                document.getElementById('admin-settings-modal').classList.add('active');
+            });
+            document.getElementById('close-admin-settings-btn').addEventListener('click', () => { playSound('click'); document.getElementById('admin-settings-modal').classList.remove('active'); });
+            document.getElementById('save-admin-settings-btn').addEventListener('click', () => {
+                playSound('click');
+                githubConfig.user = document.getElementById('github-user').value.trim();
+                githubConfig.repo = document.getElementById('github-repo').value.trim();
+                const token = document.getElementById('github-token-setup').value.trim();
+
+                if (githubConfig.user && githubConfig.repo) {
+                    localStorage.setItem(GITHUB_CONFIG_KEY, JSON.stringify(githubConfig));
+                    if (token) {
+                        sessionStorage.setItem(GITHUB_TOKEN_KEY, token);
+                        showNotification('تم حفظ إعدادات GitHub والمفتاح بنجاح.', 'success');
+                    } else {
+                        showNotification('تم حفظ إعدادات GitHub. لم يتم إدخال مفتاح.', 'success');
+                    }
+                    document.getElementById('github-token-setup').value = ''; // Clear for security
+                    document.getElementById('admin-settings-modal').classList.remove('active');
+                } else {
+                    showNotification('يرجى ملء اسم المستخدم والمستودع.', 'error');
+                }
+            });
+
+            // Image Upload Modal Events
+            document.getElementById('image-file-input').addEventListener('change', handleImageFileSelect);
+            
+            // Audio Settings Modal Events
+            adminAudioBtn.addEventListener('click', () => { playSound('click'); showAudioUploadModal(); });
+            document.getElementById('close-audio-modal-btn').addEventListener('click', () => { playSound('click'); document.getElementById('admin-audio-modal').classList.remove('active'); });
+            document.getElementById('save-custom-sounds-btn').addEventListener('click', () => { playSound('click'); saveAndApplyCustomSounds(); });
+            document.getElementById('reset-custom-sounds-btn').addEventListener('click', () => { playSound('click'); resetCustomSounds(); });
+
+        }
+        
+        // ===================================
+        // =========== Admin Audio ===========
+        // ===================================
+
+        function showAudioUploadModal() {
+            const formContainer = document.getElementById('audio-upload-form');
+            formContainer.innerHTML = '';
+            
+            for (const key in soundDefinitions) {
+                const label = document.createElement('label');
+                label.className = 'modal-label';
+                label.textContent = soundDefinitions[key];
+                label.htmlFor = `sound-input-${key}`;
+
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.id = `sound-input-${key}`;
+                input.className = 'modal-input';
+                input.accept = 'audio/*';
+                input.dataset.soundKey = key;
+
+                input.addEventListener('change', handleSoundFileSelection);
+
+                formContainer.appendChild(label);
+                formContainer.appendChild(input);
+            }
+            
+            document.getElementById('admin-audio-modal').classList.add('active');
+        }
+        
+        function handleSoundFileSelection(event) {
+            const file = event.target.files[0];
+            const key = event.target.dataset.soundKey;
+            if (!file || !key) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                customSounds[key] = e.target.result; // This is a base64 Data URL
+                showNotification(`تم تحميل صوت "${soundDefinitions[key]}" مؤقتًا.`, 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveAndApplyCustomSounds() {
+            if (Object.keys(customSounds).length > 0) {
+                const savedSounds = JSON.parse(localStorage.getItem(CUSTOM_SOUNDS_KEY) || '{}');
+                const newSounds = { ...savedSounds, ...customSounds };
+                localStorage.setItem(CUSTOM_SOUNDS_KEY, JSON.stringify(newSounds));
+                customSounds = {}; 
+                showNotification('تم حفظ الأصوات المخصصة بنجاح!', 'success');
+                loadCustomSounds();
+            } else {
+                showNotification('لم يتم اختيار ملفات جديدة للحفظ.', 'error');
+            }
+            
+            document.getElementById('admin-audio-modal').classList.remove('active');
+        }
+        
+        function resetCustomSounds() {
+            localStorage.removeItem(CUSTOM_SOUNDS_KEY);
+            showNotification('تمت استعادة الأصوات الافتراضية. سيتم إعادة تحميل الصفحة.', 'success');
+            setTimeout(() => window.location.reload(), 1500);
+        }
+
+        function loadCustomSounds() {
+            const savedSounds = localStorage.getItem(CUSTOM_SOUNDS_KEY);
+            if(savedSounds) {
+                const sounds = JSON.parse(savedSounds);
+                for (const key in sounds) {
+                    const audioElement = document.getElementById(`${key}-sound`);
+                    if (audioElement && sounds[key]) {
+                        audioElement.src = sounds[key];
+                    }
+                }
+            }
+        }
+
+        function setMusicVolume() {
+            backgroundMusic.volume = 0.1;
+        }
+
+
+        // =========================================================
+        // ===== Admin Image (Instant Preview + Background Upload) =====
+        // =========================================================
+
+        function showImageUploadModal(filename, imgElement) {
+            const token = sessionStorage.getItem(GITHUB_TOKEN_KEY);
+            if (!githubConfig.user || !githubConfig.repo || !token) {
+                showNotification('يرجى إدخال إعدادات GitHub والمفتاح أولاً عبر أيقونة الترس.', 'error');
+                adminSettingsBtn.click();
+                return;
+            }
+            uploadTarget = { filename, element: imgElement };
+            document.getElementById('required-filename').textContent = filename;
+            document.getElementById('image-upload-modal').classList.add('active');
+        }
+
+        function handleImageFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file || !uploadTarget.element) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                // 1. Instant Preview
+                uploadTarget.element.src = e.target.result;
+                uploadTarget.element.onerror = null; // Prevent future error triggers
+                
+                // 2. Close Modal and start background upload
+                document.getElementById('image-upload-modal').classList.remove('active');
+                showNotification('جاري رفع الصورة في الخلفية...', 'info');
+                uploadImageInBackground(file, e.target.result.split(',')[1]);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        async function uploadImageInBackground(file, base64content) {
+            const token = sessionStorage.getItem(GITHUB_TOKEN_KEY);
+            const filename = uploadTarget.filename;
+
+            const url = `https://api.github.com/repos/${githubConfig.user}/${githubConfig.repo}/contents/images/${filename}`;
+            
+            try {
+                // Step 1: Check for existing file SHA
+                let sha = null;
+                const getResponse = await fetch(url, { headers: { 'Authorization': `token ${token}` } });
+                if (getResponse.ok) {
+                    sha = (await getResponse.json()).sha;
+                }
+
+                // Step 2: Prepare body
+                const body = {
+                    message: sha ? `[BOT] Update ${filename}` : `[BOT] Add ${filename}`,
+                    content: base64content,
+                    committer: { name: "Science Game Bot", email: 'bot@example.com' }
+                };
+                if (sha) body.sha = sha;
+
+                // Step 3: PUT request
+                const putResponse = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                if (putResponse.ok) {
+                    showNotification(`تم رفع "${filename}" بنجاح!`, 'success');
+                } else {
+                    const error = await putResponse.json();
+                    const msg = error.message === 'Bad credentials' ? 'فشل الرفع: المفتاح غير صحيح.' : `فشل: ${error.message}`;
+                    showNotification(msg, 'error');
+                }
+            } catch (error) {
+                showNotification(`خطأ في الشبكة أثناء الرفع: ${error}`, 'error');
+            } finally {
+                uploadTarget = { filename: null, element: null }; // Reset target
+            }
+        }
+
+
+        window.addEventListener('load', () => {
+            const savedConfig = localStorage.getItem(GITHUB_CONFIG_KEY);
+            if (savedConfig) {
+                githubConfig = JSON.parse(savedConfig);
+            }
+            
+            loadCustomSounds();
+            setMusicVolume();
+            
+            const progress = loadProgress();
+            if (progress) {
+                const continueBtn = document.createElement('button');
+                continueBtn.className = 'btn continue-btn';
+                continueBtn.innerHTML = '<i class="fas fa-play-circle"></i> متابعة اللعبة';
+                continueBtn.addEventListener('click', () => {
+                    initAudioContext(); // Initialize audio on first real interaction
+                    playSound('click');
+                    
+                    score = progress.score;
+                    currentQuestionIndex = progress.currentQuestionIndex;
+                    const originalOrder = progress.questions;
+                    currentGameQuestions = questions
+                        .filter(q => originalOrder.includes(q.text))
+                        .sort((a, b) => originalOrder.indexOf(a.text) - originalOrder.indexOf(b.text));
+                    totalQuestions.textContent = currentGameQuestions.length;
+                    maxScore.textContent = currentGameQuestions.length * 10;
+                    startScreen.style.display = 'none'; gameScreen.style.display = 'block';
+                    document.getElementById('pause-btn').classList.add('active');
+                    playMusic();
+                    showQuestion();
+                });
+                startBtn.parentNode.appendChild(continueBtn);
+            }
+            
+            setupEventListeners();
+        });
+    </script>
+</body>
+</html>
