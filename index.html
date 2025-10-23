@@ -36,8 +36,37 @@
             align-items: center;
             justify-content: center;
             padding: 15px;
+            padding-top: 95px; /* تمت إضافة مساحة للشريط العلوي */
             overflow-x: hidden;
         }
+
+        /* --- START: CSS Code for Fixed Header --- */
+        #game-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 25px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        .header-logo {
+            height: 80px;
+            width: auto;
+        }
+        .header-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1e3a8a; /* لون أزرق غامق */
+            margin: 0;
+            text-align: center;
+        }
+        /* --- END: CSS Code for Fixed Header --- */
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -360,6 +389,8 @@
             .start-screen-icon { display: none; }
             .matching-item { font-size: 0.9rem; padding: 10px 8px; min-height: 50px; }
             .matching-columns { gap: 5%; }
+            .header-text { font-size: 0.8rem; padding: 0 10px;} /* Responsive header text */
+            .header-logo { height: 60px} /* Smaller logo on mobile */
 
             /* Responsive Table Styles */
             .compare-table thead { display: none; }
@@ -401,6 +432,14 @@
     </style>
 </head>
 <body>
+    <!-- --- START: Fixed Header --- -->
+    <div id="game-header">
+        <img src="logo1.png" alt="شعار مجمع الثغر" class="header-logo">
+        <p class="header-text">مبادرة من والد الطالب عمار نديم قدسي لمجمع الثغر الابتدائي بالخالدية</p>
+        <img src="logo2.png" alt="شعار المبادرة" class="header-logo">
+    </div>
+    <!-- --- END: Fixed Header --- -->
+
     <div id="screen-flash" class="screen-flash"></div>
     <div id="notification-container"></div>
     <div class="admin-indicator" id="admin-indicator">وضع المشرف</div>
@@ -1761,3 +1800,4 @@
     </script>
 </body>
 </html>
+```
